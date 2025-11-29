@@ -21,11 +21,11 @@ weights = np.random.uniform(-0.5, 0.5, size=(INPUT_SIZE))
 bias = np.random.uniform(-0.5, 0.5)
 
 # 2. Simpan ke File HEX (untuk Verilog)
-with open("disc_weights.hex", "w") as f:
+with open("layer1_disc_weights.hex", "w") as f:
     for w in weights:
         f.write(to_hex(float_to_q8_8(w)) + "\n")
 
-with open("disc_biases.hex", "w") as f:
+with open("layer1_disc_bias.hex", "w") as f:
     f.write(to_hex(float_to_q8_8(bias)) + "\n")
 
 # 3. Buat Test Vector (Input Random)
@@ -61,4 +61,4 @@ with open("disc_input_test.hex", "w") as f:
     for val in input_vector:
         f.write(to_hex(float_to_q8_8(val)) + "\n")
 
-print("\nFile 'disc_weights.hex', 'disc_biases.hex', dan 'disc_input_test.hex' telah dibuat.")
+print("\nFile 'layer1_disc_weights.hex', 'layer1_disc_bias.hex', dan 'disc_input_test.hex' telah dibuat.")

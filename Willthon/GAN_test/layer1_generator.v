@@ -13,13 +13,13 @@ module layer1_generator (
     // Memory untuk Parameter (Weights & Biases)
     // ==========================================
     // Total weights: 256 neuron * 64 input = 16384
-    reg signed [15:0] weights_mem [0:16383]; 
-    reg signed [15:0] biases_mem  [0:255];
+    reg signed [15:0] layer1_gen_weights [0:16383]; 
+    reg signed [15:0] layer1_gen_bias  [0:255];
 
     initial begin
         // Load data hex dari Python
-        $readmemh("layer1_weights.hex", weights_mem);
-        $readmemh("layer1_biases.hex", biases_mem);
+        $readmemh("layer1_gen_weights.hex", layer1_gen_weights);
+        $readmemh("layer1_gen_bias.hex", layer1_gen_bias);
     end
 
     // ==========================================
@@ -40,7 +40,7 @@ module layer1_generator (
     wire signed [31:0] next_acc;
 
     assign current_input = $signed(flat_input_flat[(input_idx+1)*16-1 -: 16]);
-    assign current_product = $signed(current_input) * $signed(weights_mem[neuron_idx*64 + input_idx]);
+    assign current_product = $signed(current_input) * $signed(layer1_gen_weights[neuron_idx*64 + input_idx]);
     assign next_acc = accumulator + current_product;
 
     // Sequential MAC pipeline: one MAC operation per clock cycle
@@ -63,8 +63,8 @@ module layer1_generator (
                 // Start a new computation: begin with neuron 0, input 0, load bias
                 neuron_idx <= 9'd0;
                 input_idx <= 7'd0;
-                bias_shifted <= $signed(biases_mem[0]) <<< 8;
-                accumulator <= $signed(biases_mem[0]) <<< 8;
+                bias_shifted <= $signed(layer1_gen_bias[0]) <<< 8;
+                accumulator <= $signed(layer1_gen_bias[0]) <<< 8;
                 busy <= 1'b1;
                 done <= 1'b0;
             end else if (busy) begin
@@ -82,8 +82,8 @@ module layer1_generator (
                     end else begin
                         // Advance to next neuron
                         neuron_idx <= neuron_idx + 1'b1;
-                        bias_shifted <= $signed(biases_mem[neuron_idx + 1]) <<< 8;
-                        accumulator <= $signed(biases_mem[neuron_idx + 1]) <<< 8;
+                        bias_shifted <= $signed(layer1_gen_bias[neuron_idx + 1]) <<< 8;
+                        accumulator <= $signed(layer1_gen_bias[neuron_idx + 1]) <<< 8;
                         input_idx <= 7'd0;
                     end
                 end else begin

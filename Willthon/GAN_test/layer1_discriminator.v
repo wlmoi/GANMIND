@@ -13,13 +13,13 @@ module layer1_discriminator (
     // ==========================================
     // Memory Parameters
     // ==========================================
-    reg signed [15:0] weights_mem [0:255]; // 256 Bobot (1 per input)
-    reg signed [15:0] bias_mem [0:0];      // 1 Bias saja untuk output node
+    reg signed [15:0] layer1_disc_weights [0:255]; // 256 Bobot (1 per input)
+    reg signed [15:0] layer1_disc_bias [0:0];      // 1 Bias saja untuk output node
 
     initial begin
         // Load file hex yang dibuat oleh Python
-        $readmemh("disc_weights.hex", weights_mem);
-        $readmemh("disc_biases.hex", bias_mem);
+        $readmemh("layer1_disc_weights.hex", layer1_disc_weights);
+        $readmemh("layer1_disc_bias.hex", layer1_disc_bias);
     end
 
     // ==========================================
@@ -37,7 +37,7 @@ module layer1_discriminator (
     
     // slice and product wires
     assign slice_w = $signed(flat_input[(idx+1)*16-1 -: 16]);
-    assign current_product = $signed(slice_w) * $signed(weights_mem[idx]);
+    assign current_product = $signed(slice_w) * $signed(layer1_disc_weights[idx]);
 
     // Sequential MAC pipeline: perform one multiply-accumulate per clock
     // Protocol: assert `start` for one cycle. Module loads bias, then performs
@@ -55,8 +55,8 @@ module layer1_discriminator (
         end else begin
             if (start && !busy) begin
                 // Start a new MAC run: load bias and begin from index 0
-                bias_shifted <= $signed(bias_mem[0]) <<< 8;
-                accumulator <= $signed(bias_mem[0]) <<< 8;
+                bias_shifted <= $signed(layer1_disc_bias[0]) <<< 8;
+                accumulator <= $signed(layer1_disc_bias[0]) <<< 8;
                 idx <= 8'd0;
                 busy <= 1'b1;
                 done <= 1'b0;
