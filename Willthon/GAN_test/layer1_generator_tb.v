@@ -89,18 +89,16 @@ module layer1_generator_tb;
 
         // 2. Tampilkan Hasil
         $display("--------------------------------------------------");
+        $display("LAYER 1 GENERATOR TEST");
         $display("Test Vector: Zero Vector (Input = 0)");
         $display("Expecting Output = Bias");
         $display("--------------------------------------------------");
         
         // Menampilkan 20 neuron pertama sebagai sampel
-        $display("Nilai Output (20 nilai pertama):");
-        $display("[%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f]", 
-                 q8_8_to_real(outputs[0]), q8_8_to_real(outputs[1]), q8_8_to_real(outputs[2]), q8_8_to_real(outputs[3]), 
-                 q8_8_to_real(outputs[4]), q8_8_to_real(outputs[5]), q8_8_to_real(outputs[6]), q8_8_to_real(outputs[7]), 
-                 q8_8_to_real(outputs[8]), q8_8_to_real(outputs[9]), q8_8_to_real(outputs[10]), q8_8_to_real(outputs[11]), 
-                 q8_8_to_real(outputs[12]), q8_8_to_real(outputs[13]), q8_8_to_real(outputs[14]), q8_8_to_real(outputs[15]), 
-                 q8_8_to_real(outputs[16]), q8_8_to_real(outputs[17]), q8_8_to_real(outputs[18]), q8_8_to_real(outputs[19]));
+        $display("Output Values (first 20):");
+        for (k = 0; k < 20; k = k + 1) begin
+            $display("[%2d] = %0.8f (hex: 0x%04x)", k, q8_8_to_real(outputs[k]), outputs[k]);
+        end
         
         $display("--------------------------------------------------");
         $display("Simulation Finished.");
